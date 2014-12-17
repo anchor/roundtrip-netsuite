@@ -1,7 +1,7 @@
 name:                roundtrip-netsuite
 version:             0.1.0.0
 synopsis:            Un-/parse Netsuite things with roundtrip invertible syntax definitions.
-destription:         Un-/parse Netsuite things with roundtrip invertible syntax definitions.
+description:         Un-/parse Netsuite things with roundtrip invertible syntax definitions.
 homepage:            https://github.com/anchor/roundtrip-netsuite
 license:             BSD3
 license-file:        LICENSE
