@@ -12,6 +12,7 @@ module Netsuite.Parsers where
 
 import Control.Isomorphism.Partial
 import Data.Aeson
+import Data.Scientific
 import qualified Data.ByteString.Lazy.Char8 as L
 import Data.Monoid
 import Data.Text (Text)
@@ -19,7 +20,7 @@ import Text.Roundtrip.Classes
 import Data.Aeson.RoundTrip
 import Text.Roundtrip.Combinators
 
-currency :: JsonSyntax s => s Rational
+currency :: JsonSyntax s => s Scientific
 currency = undefined
 
 
