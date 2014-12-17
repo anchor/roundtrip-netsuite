@@ -9,6 +9,7 @@
 
 
 import Test.Hspec
+import Netsuite.Parsers
 
 main :: IO ()
 main = hspec $ do
