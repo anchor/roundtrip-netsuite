@@ -24,10 +24,16 @@ import qualified Data.Text.Lazy.Builder            as LT
 import qualified Data.Text.Lazy.Builder.Scientific as LT
 import           Text.Read                         (readMaybe)
 
--- Parse a netsuite currency field, which is a blob of text looking like:
--- "00.43"
+-- | Parse a netsuite currency field, which is a blob of text looking like:
+--
+--   "00.43"
+-- 
+-- This un-/parser retains all precision avaliable.
 currency :: JsonSyntax s => s Scientific
 currency = demote (prism' f g) <$> value
   where
-    f = String . LT.toStrict . LT.toLazyText . LT.scientificBuilder
-    g = preview _String >=> readMaybe . ST.unpack . ST.filter (not . isSpace)
+    f = String . LT.toStrict . LT.toLazyText . fmt
+    g = readMaybe . ST.unpack . ST.filter (not . isSpace) <=< preview _String
+    -- We render with arbitrary precision (None) with standard decimal notation
+    -- (Fixed)
+    fmt = LT.formatScientificBuilder Fixed Nothing
