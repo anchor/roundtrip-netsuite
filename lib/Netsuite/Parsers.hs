@@ -34,6 +34,6 @@ currency = demote (prism' f g) <$> value
   where
     f = String . LT.toStrict . LT.toLazyText . fmt
     g = readMaybe . ST.unpack . ST.filter (not . isSpace) <=< preview _String
-    -- We render with arbitrary precision (None) with standard decimal notation
+    -- We render with 2 decimal places (Just 2) with standard decimal notation
     -- (Fixed)
-    fmt = LT.formatScientificBuilder Fixed Nothing
+    fmt = LT.formatScientificBuilder Fixed (Just 2)
