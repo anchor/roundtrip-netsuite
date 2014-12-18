@@ -10,7 +10,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 import           Data.Aeson
-import           Data.Aeson.RoundTrip
+import           Data.Aeson.Roundtrip
 import           Test.Hspec
 import qualified Data.Text as T
 

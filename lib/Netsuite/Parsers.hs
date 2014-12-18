@@ -15,7 +15,7 @@ import           Control.Lens
 import           Control.Monad
 import           Data.Aeson
 import           Data.Aeson.Lens
-import           Data.Aeson.RoundTrip
+import           Data.Aeson.Roundtrip
 import           Data.Char
 import           Data.Scientific
 import qualified Data.Text                         as ST
