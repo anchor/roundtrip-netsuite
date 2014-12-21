@@ -13,11 +13,13 @@ import           Data.Aeson
 import           Data.Aeson.Roundtrip
 import           Test.Hspec
 import qualified Data.Text as T
+import           Data.Time
+import           System.Locale
 
 import           Netsuite.Parsers
 
 main :: IO ()
-main = hspec $
+main = hspec $ do
     describe "currency syntax" $ do
         it "round trips netsuite currency" $ do
             runBuilder currency 42.34567 `shouldBe` Just (String "42.34567")
@@ -30,3 +32,11 @@ main = hspec $
             runParser currency "00.00" `shouldBe`  Just 0
             runParser currency "00.0001" `shouldBe`  Just 0.0001
             runParser currency " 0008. 0001 " `shouldBe`  Just 8.0001
+
+    describe "datetime syntax" $
+        it "round trips netsuite datetime" $ do
+            let td = readTime defaultTimeLocale "%Y-%m-%d" "2010-01-01"
+            runBuilder datetime td `shouldBe` Just (String "01/01/2010 12:00 am")
+            let expected_x = readTime defaultTimeLocale "%Y-%m-%d %H:%M:%S" "2014-12-24 23:59:00"
+            let n = "24/12/2014 11:59 pm"
+            runParser datetime n `shouldBe` Just expected_x

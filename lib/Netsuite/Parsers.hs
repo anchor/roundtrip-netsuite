@@ -22,6 +22,8 @@ import qualified Data.Text                         as ST
 import qualified Data.Text.Lazy                    as LT
 import qualified Data.Text.Lazy.Builder            as LT
 import qualified Data.Text.Lazy.Builder.Scientific as LT
+import           Data.Time
+import           System.Locale
 import           Text.Read                         (readMaybe)
 
 -- | Parse a netsuite currency field, which is a blob of text looking like:
@@ -37,3 +39,13 @@ currency = demote (prism' f g) <$> value
     -- We render with arbitrary precision (None) with standard decimal notation
     -- (Fixed)
     fmt = LT.formatScientificBuilder Fixed Nothing
+
+-- | Parse a netsuite datetime field, which is looks like:
+--
+--    "20/6/2014 4:25 pm"
+datetime :: JsonSyntax s => s UTCTime
+datetime = demote (prism' f g) <$> value
+  where
+    f = String . LT.toStrict . LT.toLazyText . LT.fromText . ST.pack . formatTime defaultTimeLocale fmt
+    g = parseTime defaultTimeLocale fmt . ST.unpack <=< preview _String
+    fmt = "%d/%m/%Y %l:%M %P"
