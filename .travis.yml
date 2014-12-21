@@ -4,3 +4,7 @@ notifications:
   email:
     on_success: change
     on_failure: change
+before_install:
+  - cabal sandbox init
+  - git clone https://github.com/anchor/roundtrip-aeson.git
+  - cabal sandbox add-source roundtrip-aeson
