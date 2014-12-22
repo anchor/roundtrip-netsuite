@@ -48,4 +48,4 @@ datetime = demote (prism' f g) <$> value
   where
     f = String . ST.pack . opts formatTime
     g = opts parseTime . ST.unpack <=< preview _String
-    opts h = h defaultTimeLocale "%d/%m/%Y %l:%M %P"
+    opts h = h defaultTimeLocale "%-d/%-m/%Y %-l:%M %P"
