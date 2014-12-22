@@ -36,8 +36,8 @@ currency = demote (prism' f g) <$> value
   where
     f = String . LT.toStrict . LT.toLazyText . fmt
     g = readMaybe . ST.unpack . ST.filter (not . isSpace) <=< preview _String
-    -- We render with arbitrary precision (None) with standard decimal notation
-    -- (Fixed)
+    -- We render with arbitrary precision (Nothing) with standard decimal
+    -- notation (Fixed)
     fmt = LT.formatScientificBuilder Fixed Nothing
 
 -- | Parse a netsuite datetime field, which is looks like:
@@ -46,6 +46,6 @@ currency = demote (prism' f g) <$> value
 datetime :: JsonSyntax s => s UTCTime
 datetime = demote (prism' f g) <$> value
   where
-    f = String . LT.toStrict . LT.toLazyText . LT.fromText . ST.pack . formatTime defaultTimeLocale fmt
-    g = parseTime defaultTimeLocale fmt . ST.unpack <=< preview _String
-    fmt = "%d/%m/%Y %l:%M %P"
+    f = String . ST.pack . opts formatTime
+    g = opts parseTime . ST.unpack <=< preview _String
+    opts h = h defaultTimeLocale "%d/%m/%Y %l:%M %P"
