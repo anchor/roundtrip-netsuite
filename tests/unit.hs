@@ -33,10 +33,30 @@ main = hspec $ do
             runParser currency "00.0001" `shouldBe`  Just 0.0001
             runParser currency " 0008. 0001 " `shouldBe`  Just 8.0001
 
-    describe "datetime syntax" $
+    describe "datetime syntax" $ do
         it "round trips netsuite datetime" $ do
             let td = readTime defaultTimeLocale "%Y-%m-%d" "2010-01-01"
-            runBuilder datetime td `shouldBe` Just (String "01/01/2010 12:00 am")
+            runBuilder datetime td `shouldBe` Just (String "1/1/2010 12:00 am")
             let expected_x = readTime defaultTimeLocale "%Y-%m-%d %H:%M:%S" "2014-12-24 23:59:00"
             let n = "24/12/2014 11:59 pm"
             runParser datetime n `shouldBe` Just expected_x
+
+        it "round trips different datetime strings" $ do
+            _ <- mapM roundtripOneDate netsuiteDates
+            return ()
+
+roundtripOneDate :: String -> Expectation
+roundtripOneDate d = do
+    let d' = (String $ T.pack d)
+    let (Just p) = runParser datetime d'
+    runBuilder datetime p `shouldBe` Just d'
+
+netsuiteDates :: [String]
+netsuiteDates = [ "17/11/2014 6:31 pm"
+                , "28/8/2013 1:59 pm"
+                , "28/8/2013 2:07 pm"
+                , "9/12/2014 3:15 pm"
+                , "10/12/2014 11:29 am"
+                , "1/1/2010 12:00 am"
+                , "24/12/2014 11:59 pm"
+                ]

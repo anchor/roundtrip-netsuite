@@ -28,6 +28,7 @@ library
                      , lens
                      , lens-aeson
                      , old-locale
+                     , regex-compat
                      , roundtrip
                      , roundtrip-aeson
                      , attoparsec
