@@ -25,6 +25,7 @@ import qualified Data.Text.Lazy.Builder.Scientific as LT
 import           Data.Time
 import           System.Locale
 import           Text.Read                         (readMaybe)
+import           Text.Regex
 
 -- | Parse a netsuite currency field, which is a blob of text looking like:
 --
@@ -46,6 +47,11 @@ currency = demote (prism' f g) <$> value
 datetime :: JsonSyntax s => s UTCTime
 datetime = demote (prism' f g) <$> value
   where
-    f = String . ST.pack . opts formatTime
-    g = opts parseTime . ST.unpack <=< preview _String
+    f = String . ST.pack . removeLeading . cleanSpaces . opts formatTime
+    g = opts parseTime . addLeading . ST.unpack <=< preview _String
     opts h = h defaultTimeLocale "%d/%m/%Y %l:%M %P"
+    cleanSpaces x  = subRegex (mkRegex "[[:space:]]+") x " "
+    addLeading x = subRegex (mkRegex "^([1-9])\\/")
+                            (subRegex (mkRegex "\\/([1-9])\\/") x "/0\\1/")
+                            "0\\1/"
+    removeLeading x = subRegex (mkRegex "0([1-9])\\/") x "\\1/"
