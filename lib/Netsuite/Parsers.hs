@@ -29,10 +29,10 @@ import           Text.Read                         (readMaybe)
 -- | Parse a netsuite currency field, which is a blob of text looking like:
 --
 --   "00.43"
--- 
+--
 -- This un-/parser retains all precision avaliable.
 currency :: JsonSyntax s => s Scientific
-currency = demote (prism' f g) <$> value
+currency = demoteLR "NetSuite datetime" (prism' f g) <$> value
   where
     f = String . LT.toStrict . LT.toLazyText . fmt
     g = readMaybe . ST.unpack . ST.filter (not . isSpace) <=< preview _String
@@ -44,7 +44,7 @@ currency = demote (prism' f g) <$> value
 --
 --    "20/6/2014 4:25 pm"
 datetime :: JsonSyntax s => s UTCTime
-datetime = demote (prism' f g) <$> value
+datetime = demoteLR "NetSuite datetime" (prism' f g) <$> value
   where
     f = String . ST.pack . opts formatTime
     g = opts parseTime . ST.unpack <=< preview _String
