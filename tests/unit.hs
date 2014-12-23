@@ -21,24 +21,24 @@ main :: IO ()
 main = hspec $ do
     describe "currency syntax" $ do
         it "round trips netsuite currency" $ do
-            runBuilder currency 42.34567 `shouldBe` Just (String "42.34567")
+            runBuilder currency 42.34567 `shouldBe` Right (String "42.34567")
             let n = 1e1024 + 1e-1024
-            let Just (String x) = runBuilder currency n
+            let Right (String x) = runBuilder currency n
             T.length x `shouldBe` 2050
-            runParser currency  (String x) `shouldBe` Just n
+            runParser currency  (String x) `shouldBe` Right n
 
         it "parses corner cases" $ do
-            runParser currency "00.00" `shouldBe`  Just 0
-            runParser currency "00.0001" `shouldBe`  Just 0.0001
-            runParser currency " 0008. 0001 " `shouldBe`  Just 8.0001
+            runParser currency "00.00" `shouldBe`  Right 0
+            runParser currency "00.0001" `shouldBe`  Right 0.0001
+            runParser currency " 0008. 0001 " `shouldBe`  Right 8.0001
 
     describe "datetime syntax" $
         it "round trips different datetime strings" $
             forM_ netsuiteDates $  \d ->
                 let v = String $ T.pack d
                 in case runParser datetime v of
-                    Nothing -> error $ "Failed to parse: " ++ show v
-                    Just t  -> runBuilder datetime t `shouldBe` Just v
+                    Left e -> error $ "Failed to parse: " ++ show e
+                    Right t  -> runBuilder datetime t `shouldBe` Right v
 
 netsuiteDates :: [String]
 netsuiteDates = [ "17/11/2014 6:31 pm"
