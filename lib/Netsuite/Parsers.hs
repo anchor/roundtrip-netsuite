@@ -32,7 +32,7 @@ import           Text.Read                         (readMaybe)
 --
 -- This un-/parser retains all precision avaliable.
 currency :: JsonSyntax s => s Scientific
-currency = demoteLR "NetSuite datetime" (prism' f g) <$> value
+currency = demoteLR "NetSuite currency" (prism' f g) <$> value
   where
     f = String . LT.toStrict . LT.toLazyText . fmt
     g = readMaybe . ST.unpack . ST.filter (not . isSpace) <=< preview _String
